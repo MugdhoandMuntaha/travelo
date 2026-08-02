@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Plane, Building2, FileText, Compass, Headphones, Stamp, MessageSquare } from 'lucide-react';
 import type { FlightDeal, VisaService, TourPackage } from '../types';
-import { API_BASE_URL } from '../config';
+import { API_BASE_URL, safeFetchJson } from '../config';
 
 interface ServicesSectionProps {
   activeTab?: string;
@@ -48,51 +48,42 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ activeTab, onS
 
   useEffect(() => {
     // Fetch Flights
-    fetch(`${API_BASE_URL}/api/flights`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success && data.flights && data.flights.length > 0) {
-          setFlightDeals(data.flights.map((f: any) => ({
-            id: f._id || f.id,
-            from: f.from,
-            to: f.to,
-            type: f.type,
-            airline: f.airline,
-            priceEstimate: f.priceEstimate,
-            image: f.image,
-            tag: f.tag
-          })));
-        }
-      })
-      .catch(() => {});
+    safeFetchJson(`${API_BASE_URL}/api/flights`).then((data) => {
+      if (data && data.success && data.flights && data.flights.length > 0) {
+        setFlightDeals(data.flights.map((f: any) => ({
+          id: f._id || f.id,
+          from: f.from,
+          to: f.to,
+          type: f.type,
+          airline: f.airline,
+          priceEstimate: f.priceEstimate,
+          image: f.image,
+          tag: f.tag
+        })));
+      }
+    });
 
     // Fetch Visas
-    fetch(`${API_BASE_URL}/api/visas`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success && data.visas && data.visas.length > 0) {
-          setVisaServices(data.visas);
-        }
-      })
-      .catch(() => {});
+    safeFetchJson(`${API_BASE_URL}/api/visas`).then((data) => {
+      if (data && data.success && data.visas && data.visas.length > 0) {
+        setVisaServices(data.visas);
+      }
+    });
 
     // Fetch Tour Packages
-    fetch(`${API_BASE_URL}/api/packages`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success && data.packages && data.packages.length > 0) {
-          setTourPackages(data.packages.map((p: any) => ({
-            id: p._id || p.id,
-            title: p.title,
-            destination: p.destination,
-            duration: p.duration,
-            price: p.price,
-            image: p.image,
-            highlights: p.highlights || []
-          })));
-        }
-      })
-      .catch(() => {});
+    safeFetchJson(`${API_BASE_URL}/api/packages`).then((data) => {
+      if (data && data.success && data.packages && data.packages.length > 0) {
+        setTourPackages(data.packages.map((p: any) => ({
+          id: p._id || p.id,
+          title: p.title,
+          destination: p.destination,
+          duration: p.duration,
+          price: p.price,
+          image: p.image,
+          highlights: p.highlights || []
+        })));
+      }
+    });
   }, []);
 
   const coreServices = [

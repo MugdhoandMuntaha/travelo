@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Image, Plus, Trash2, FileSpreadsheet, Plane, Users, DollarSign, Copy, Stamp, Compass } from 'lucide-react';
-import { API_BASE_URL } from '../config';
+import { Image, Plus, Trash2, FileSpreadsheet, Plane, Users, DollarSign, Copy, Stamp, Compass, Phone, MessageSquare, Settings, CheckCircle } from 'lucide-react';
+import { API_BASE_URL, safeFetchJson } from '../config';
 
 interface BannerItem {
   _id?: string;
@@ -84,7 +84,7 @@ interface AdminPanelProps {
 }
 
 export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToSite }) => {
-  const [activeTab, setActiveTab] = useState<'visas' | 'flights' | 'packages' | 'banners' | 'referrals' | 'leads'>('visas');
+  const [activeTab, setActiveTab] = useState<'visas' | 'flights' | 'packages' | 'banners' | 'referrals' | 'leads' | 'settings'>('visas');
   
   // Visas state & form
   const [visas, setVisas] = useState<VisaItem[]>([]);
@@ -139,71 +139,103 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToSite }) => {
   // Leads State
   const [leads, setLeads] = useState<LeadItem[]>([]);
 
+  // Agency Settings State
+  const [whatsappNumber, setWhatsappNumber] = useState('8801700000000');
+  const [phoneNumber, setPhoneNumber] = useState('8801700000000');
+  const [agencyEmail, setAgencyEmail] = useState('contact@travelo.com');
+  const [agencyAddress, setAgencyAddress] = useState('Dhaka, Bangladesh');
+
+  // Global Toast Notification State
+  const [toastMsg, setToastMsg] = useState('');
+
+  const showToast = (msg: string) => {
+    setToastMsg(msg);
+    setTimeout(() => setToastMsg(''), 4500);
+  };
+
+  // Fetch Settings
+  const fetchSettings = () => {
+    safeFetchJson(`${API_BASE_URL}/api/settings`).then((data) => {
+      if (data && data.success && data.settings) {
+        if (data.settings.whatsappNumber) setWhatsappNumber(data.settings.whatsappNumber);
+        if (data.settings.phoneNumber) setPhoneNumber(data.settings.phoneNumber);
+        if (data.settings.agencyEmail) setAgencyEmail(data.settings.agencyEmail);
+        if (data.settings.agencyAddress) setAgencyAddress(data.settings.agencyAddress);
+      }
+    });
+  };
+
+  const handleSaveSettings = (e: React.FormEvent) => {
+    e.preventDefault();
+    safeFetchJson(`${API_BASE_URL}/api/settings`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        whatsappNumber,
+        phoneNumber,
+        agencyEmail,
+        agencyAddress
+      })
+    }).then((data) => {
+      if (data && data.success) {
+        showToast('✅ Agency WhatsApp & Phone Numbers updated successfully!');
+      }
+    });
+  };
+
   // Fetch Visas
   const fetchVisas = () => {
-    fetch(`${API_BASE_URL}/api/visas`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success && data.visas) {
-          setVisas(data.visas);
-        }
-      });
+    safeFetchJson(`${API_BASE_URL}/api/visas`).then((data) => {
+      if (data && data.success && data.visas) {
+        setVisas(data.visas);
+      }
+    });
   };
 
   // Fetch Packages
   const fetchPackages = () => {
-    fetch(`${API_BASE_URL}/api/packages`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success && data.packages) {
-          setPackages(data.packages);
-        }
-      });
+    safeFetchJson(`${API_BASE_URL}/api/packages`).then((data) => {
+      if (data && data.success && data.packages) {
+        setPackages(data.packages);
+      }
+    });
   };
 
   // Fetch Banners
   const fetchBanners = () => {
-    fetch(`${API_BASE_URL}/api/banners`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success && data.banners) {
-          setBanners(data.banners);
-        }
-      });
+    safeFetchJson(`${API_BASE_URL}/api/banners`).then((data) => {
+      if (data && data.success && data.banners) {
+        setBanners(data.banners);
+      }
+    });
   };
 
   // Fetch Flights
   const fetchFlights = () => {
-    fetch(`${API_BASE_URL}/api/flights`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success && data.flights) {
-          setFlights(data.flights);
-        }
-      });
+    safeFetchJson(`${API_BASE_URL}/api/flights`).then((data) => {
+      if (data && data.success && data.flights) {
+        setFlights(data.flights);
+      }
+    });
   };
 
   // Fetch Referrals Data
   const fetchReferrals = () => {
-    fetch(`${API_BASE_URL}/api/referrals/get-all`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) {
-          setReferrers(data.referrers || []);
-          setConversions(data.conversions || []);
-        }
-      });
+    safeFetchJson(`${API_BASE_URL}/api/referrals/get-all`).then((data) => {
+      if (data && data.success) {
+        setReferrers(data.referrers || []);
+        setConversions(data.conversions || []);
+      }
+    });
   };
 
   // Fetch Leads
   const fetchLeads = () => {
-    fetch(`${API_BASE_URL}/api/leads`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success && data.leads) {
-          setLeads(data.leads);
-        }
-      });
+    safeFetchJson(`${API_BASE_URL}/api/leads`).then((data) => {
+      if (data && data.success && data.leads) {
+        setLeads(data.leads);
+      }
+    });
   };
 
   useEffect(() => {
@@ -213,6 +245,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToSite }) => {
     fetchFlights();
     fetchReferrals();
     fetchLeads();
+    fetchSettings();
   }, []);
 
   // Handle Add Visa Card
@@ -243,6 +276,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToSite }) => {
           fetchVisas();
           setVisaCountry('');
           setVisaRequirementsText('');
+          showToast('✅ Visa Assistance Card saved to MongoDB!');
         }
       });
   };
@@ -252,7 +286,10 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToSite }) => {
     if (!confirm('Are you sure you want to delete this Visa Assistance Card?')) return;
     fetch(`${API_BASE_URL}/api/visas/${id}`, { method: 'DELETE' })
       .then((res) => res.json())
-      .then(() => fetchVisas());
+      .then(() => {
+        fetchVisas();
+        showToast('🗑️ Visa Assistance Card deleted!');
+      });
   };
 
   // Handle Add Package Card
@@ -284,6 +321,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToSite }) => {
           setPkgTitle('');
           setPkgDestination('');
           setPkgImage('');
+          showToast('✅ Tour Package saved to MongoDB!');
         }
       });
   };
@@ -293,7 +331,10 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToSite }) => {
     if (!confirm('Are you sure you want to delete this Tour Package Card?')) return;
     fetch(`${API_BASE_URL}/api/packages/${id}`, { method: 'DELETE' })
       .then((res) => res.json())
-      .then(() => fetchPackages());
+      .then(() => {
+        fetchPackages();
+        showToast('🗑️ Tour Package deleted!');
+      });
   };
 
   // Handle Add Banner
@@ -321,6 +362,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToSite }) => {
           setNewTitle('');
           setNewSubtitle('');
           setNewImageUrl('');
+          showToast('✅ Hero Banner slide saved to MongoDB!');
         }
       });
   };
@@ -330,7 +372,10 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToSite }) => {
     if (!confirm('Are you sure you want to delete this hero banner slide?')) return;
     fetch(`${API_BASE_URL}/api/banners/${id}`, { method: 'DELETE' })
       .then((res) => res.json())
-      .then(() => fetchBanners());
+      .then(() => {
+        fetchBanners();
+        showToast('🗑️ Hero Banner slide deleted!');
+      });
   };
 
   // Handle Add Flight Card
@@ -357,6 +402,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToSite }) => {
           fetchFlights();
           setFlightTo('');
           setFlightImage('');
+          showToast('✅ Flight Card saved to MongoDB!');
         }
       });
   };
@@ -366,7 +412,10 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToSite }) => {
     if (!confirm('Are you sure you want to delete this Flight Card?')) return;
     fetch(`${API_BASE_URL}/api/flights/${id}`, { method: 'DELETE' })
       .then((res) => res.json())
-      .then(() => fetchFlights());
+      .then(() => {
+        fetchFlights();
+        showToast('🗑️ Flight Card deleted!');
+      });
   };
 
   // Handle Add Referrer
@@ -390,6 +439,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToSite }) => {
           setCreatedRefCode(data.refCode);
           setRefName('');
           setRefPhone('');
+          showToast(`✅ Partner Referral Code ${data.refCode} generated & saved!`);
         }
       });
   };
@@ -399,7 +449,10 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToSite }) => {
     if (!confirm('Are you sure you want to delete this Referrer Partner?')) return;
     fetch(`${API_BASE_URL}/api/referrals/referrer/${id}`, { method: 'DELETE' })
       .then((res) => res.json())
-      .then(() => fetchReferrals());
+      .then(() => {
+        fetchReferrals();
+        showToast('🗑️ Referral Partner deleted!');
+      });
   };
 
   // Handle Add Conversion
@@ -411,10 +464,10 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToSite }) => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        ref_code: convRefCode,
-        client_name: convClientName,
-        booking_value: convBookingValue,
-        commission_amount: convCommission,
+        refCode: convRefCode,
+        clientName: convClientName,
+        bookingValue: convBookingValue,
+        commissionAmount: convCommission,
         note: convNote
       })
     })
@@ -426,6 +479,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToSite }) => {
           setConvBookingValue('');
           setConvCommission('');
           setConvNote('');
+          showToast('✅ Partner Conversion & Commission recorded!');
         }
       });
   };
@@ -439,13 +493,40 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToSite }) => {
       body: JSON.stringify({ status: nextStatus })
     })
       .then((res) => res.json())
-      .then(() => fetchReferrals());
+      .then(() => {
+        fetchReferrals();
+        showToast(`🔄 Conversion payment status changed to ${nextStatus}!`);
+      });
   };
 
   return (
     <div style={{ background: '#0f172a', minHeight: '100vh', color: 'white', padding: '2rem 0' }}>
       <div className="container">
         
+        {/* Floating Action Confirmation Toast */}
+        {toastMsg && (
+          <div style={{
+            position: 'fixed',
+            top: '24px',
+            right: '24px',
+            zIndex: 99999,
+            background: '#065f46',
+            color: '#ecfdf5',
+            border: '1px solid #10b981',
+            padding: '1rem 1.5rem',
+            borderRadius: '14px',
+            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.45)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.75rem',
+            fontWeight: 700,
+            fontSize: '0.95rem'
+          }}>
+            <CheckCircle size={22} color="#34d399" />
+            {toastMsg}
+          </div>
+        )}
+
         {/* Admin Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', borderBottom: '1px solid #334155', paddingBottom: '1rem' }}>
           <div>
@@ -537,6 +618,18 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToSite }) => {
             }}
           >
             <FileSpreadsheet size={16} /> Incoming Leads ({leads.length})
+          </button>
+
+          <button
+            onClick={() => setActiveTab('settings')}
+            className="btn"
+            style={{
+              background: activeTab === 'settings' ? '#0284c7' : '#1e293b',
+              color: 'white',
+              fontSize: '0.9rem'
+            }}
+          >
+            <MessageSquare size={16} /> WhatsApp & Phone Numbers
           </button>
         </div>
 
@@ -1351,6 +1444,90 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToSite }) => {
                 </table>
               </div>
             )}
+          </div>
+        )}
+
+        {/* SETTINGS / WHATSAPP MANAGEMENT TAB */}
+        {activeTab === 'settings' && (
+          <div style={{ maxWidth: '650px', background: '#1e293b', padding: '2rem', borderRadius: '16px', border: '1px solid #334155' }}>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.4rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Settings size={22} color="#38bdf8" /> WhatsApp & Agency Phone Numbers CRUD
+            </h3>
+            <p style={{ fontSize: '0.85rem', color: '#94a3b8', marginBottom: '1.5rem' }}>
+              Update the official WhatsApp number and direct agency call line used for bookings, floating bars, and customer inquiries across the site.
+            </p>
+
+
+
+            <form onSubmit={handleSaveSettings} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              <div>
+                <label style={{ fontSize: '0.85rem', fontWeight: 600, color: '#e2e8f0', display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.4rem' }}>
+                  <MessageSquare size={16} color="#22c55e" /> Primary WhatsApp Business Number
+                </label>
+                <input 
+                  type="text" 
+                  required
+                  value={whatsappNumber}
+                  onChange={(e) => setWhatsappNumber(e.target.value)}
+                  placeholder="e.g. 8801700000000 (Include Country Code without +)"
+                  style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #334155', background: '#0f172a', color: 'white', fontSize: '0.95rem' }}
+                />
+                <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.25rem' }}>
+                  Used for pre-filled booking chats on WhatsApp. Enter digits with country code (e.g. 8801700000000).
+                </div>
+              </div>
+
+              <div>
+                <label style={{ fontSize: '0.85rem', fontWeight: 600, color: '#e2e8f0', display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.4rem' }}>
+                  <Phone size={16} color="#38bdf8" /> Direct Phone Line for Calls
+                </label>
+                <input 
+                  type="text" 
+                  required
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  placeholder="e.g. 8801700000000 or +8801700000000"
+                  style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #334155', background: '#0f172a', color: 'white', fontSize: '0.95rem' }}
+                />
+                <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.25rem' }}>
+                  Used when customers tap "Call Agency Agent Now" or mobile floating call buttons.
+                </div>
+              </div>
+
+              <div>
+                <label style={{ fontSize: '0.85rem', fontWeight: 600, color: '#e2e8f0', display: 'block', marginBottom: '0.4rem' }}>
+                  Agency Official Email (Optional)
+                </label>
+                <input 
+                  type="email" 
+                  value={agencyEmail}
+                  onChange={(e) => setAgencyEmail(e.target.value)}
+                  placeholder="e.g. support@travelo.com"
+                  style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #334155', background: '#0f172a', color: 'white', fontSize: '0.95rem' }}
+                />
+              </div>
+
+              <div>
+                <label style={{ fontSize: '0.85rem', fontWeight: 600, color: '#e2e8f0', display: 'block', marginBottom: '0.4rem' }}>
+                  Agency Office Address (Optional)
+                </label>
+                <input 
+                  type="text" 
+                  value={agencyAddress}
+                  onChange={(e) => setAgencyAddress(e.target.value)}
+                  placeholder="e.g. Dhaka, Bangladesh"
+                  style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #334155', background: '#0f172a', color: 'white', fontSize: '0.95rem' }}
+                />
+              </div>
+
+              <button 
+                type="submit" 
+                className="btn btn-primary"
+                style={{ padding: '0.85rem', fontSize: '0.95rem', borderRadius: '10px', marginTop: '0.5rem' }}
+              >
+                Save Phone & WhatsApp Settings
+              </button>
+            </form>
           </div>
         )}
 

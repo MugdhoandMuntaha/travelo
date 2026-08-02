@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, MessageSquare, PhoneCall, Sparkles } from 'lucide-react';
-import { API_BASE_URL } from '../config';
+import { API_BASE_URL, safeFetchJson } from '../config';
 
 export interface BannerSlide {
   _id?: string;
@@ -49,14 +49,11 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ onSelectBooking }) =
   const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/api/banners`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success && data.banners && data.banners.length > 0) {
-          setSlides(data.banners);
-        }
-      })
-      .catch(() => console.log('Using default slides'));
+    safeFetchJson(`${API_BASE_URL}/api/banners`).then((data) => {
+      if (data && data.success && data.banners && data.banners.length > 0) {
+        setSlides(data.banners);
+      }
+    });
   }, []);
 
   // Automatic slide interval

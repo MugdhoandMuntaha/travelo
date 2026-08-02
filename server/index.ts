@@ -8,6 +8,7 @@ import { BannerModel } from './models/Banner';
 import { FlightModel } from './models/Flight';
 import { VisaModel } from './models/Visa';
 import { PackageModel } from './models/Package';
+import { SettingModel } from './models/Setting';
 
 dotenv.config();
 
@@ -46,7 +47,75 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// 2. Leads Endpoints
+// 2. Settings & WhatsApp Numbers CRUD
+app.get('/api/settings', async (req, res) => {
+  try {
+    if (!isDbConnected()) {
+      return res.json({
+        success: true,
+        settings: {
+          whatsappNumber: '8801700000000',
+          phoneNumber: '8801700000000',
+          agencyEmail: 'contact@travelo.com',
+          agencyAddress: 'Dhaka, Bangladesh'
+        }
+      });
+    }
+
+    let settings = await SettingModel.findOne();
+    if (!settings) {
+      settings = new SettingModel({
+        whatsappNumber: '8801700000000',
+        phoneNumber: '8801700000000',
+        agencyEmail: 'contact@travelo.com',
+        agencyAddress: 'Dhaka, Bangladesh'
+      });
+      await settings.save();
+    }
+
+    return res.json({ success: true, settings });
+  } catch (error: any) {
+    return res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.post('/api/settings', async (req, res) => {
+  try {
+    const { whatsappNumber, phoneNumber, agencyEmail, agencyAddress } = req.body;
+
+    if (!isDbConnected()) {
+      return res.json({
+        success: true,
+        message: 'Settings updated in demo mode',
+        settings: { whatsappNumber, phoneNumber, agencyEmail, agencyAddress }
+      });
+    }
+
+    let settings = await SettingModel.findOne();
+    if (settings) {
+      if (whatsappNumber) settings.whatsappNumber = whatsappNumber;
+      if (phoneNumber) settings.phoneNumber = phoneNumber;
+      if (agencyEmail) settings.agencyEmail = agencyEmail;
+      if (agencyAddress) settings.agencyAddress = agencyAddress;
+      settings.updatedAt = new Date();
+      await settings.save();
+    } else {
+      settings = new SettingModel({
+        whatsappNumber: whatsappNumber || '8801700000000',
+        phoneNumber: phoneNumber || '8801700000000',
+        agencyEmail: agencyEmail || 'contact@travelo.com',
+        agencyAddress: agencyAddress || 'Dhaka, Bangladesh'
+      });
+      await settings.save();
+    }
+
+    return res.json({ success: true, settings, message: 'Settings saved successfully' });
+  } catch (error: any) {
+    return res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// 3. Leads Endpoints
 app.post('/api/leads', async (req, res) => {
   try {
     const { title, category, priceEstimate, customerName, customerPhone, notes } = req.body;
