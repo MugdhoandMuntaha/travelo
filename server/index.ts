@@ -476,6 +476,10 @@ app.delete('/api/packages/:id', async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Travelo Backend Server running on http://localhost:${PORT}`);
-});
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`🚀 Travelo Backend Server running on http://localhost:${PORT}`);
+  });
+}
+
+export default app;
