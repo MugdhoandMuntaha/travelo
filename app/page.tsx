@@ -5,6 +5,8 @@ import { Navbar } from '@/src/components/Navbar';
 import { HeroCarousel } from '@/src/components/HeroCarousel';
 import { StatsSection } from '@/src/components/StatsSection';
 import { ServicesSection } from '@/src/components/ServicesSection';
+import { TestimonialsSection } from '@/src/components/TestimonialsSection';
+import { CtaSection } from '@/src/components/CtaSection';
 import { ProposalModal } from '@/src/components/ProposalModal';
 import { LeadModal } from '@/src/components/LeadModal';
 import { StickyMobileBar } from '@/src/components/StickyMobileBar';
@@ -52,6 +54,12 @@ export default function HomePage() {
 
         {/* Animated Statistics Counter Banner */}
         <StatsSection />
+
+        {/* Testimonials Review Section */}
+        <TestimonialsSection />
+
+        {/* Pre-Footer Call to Action Section */}
+        <CtaSection onOpenProposal={() => setIsProposalOpen(true)} />
       </main>
 
       {/* Footer */}
