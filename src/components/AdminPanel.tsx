@@ -157,27 +157,46 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToSite }) => {
 
   // Fetch Settings
   const fetchSettings = () => {
+    try {
+      const cached = localStorage.getItem('travelo_settings');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed.whatsappNumber) setWhatsappNumber(parsed.whatsappNumber);
+        if (parsed.phoneNumber) setPhoneNumber(parsed.phoneNumber);
+        if (parsed.agencyEmail) setAgencyEmail(parsed.agencyEmail);
+        if (parsed.agencyAddress) setAgencyAddress(parsed.agencyAddress);
+      }
+    } catch (e) {}
+
     safeFetchJson(`${API_BASE_URL}/api/settings`).then((data) => {
       if (data && data.success && data.settings) {
         if (data.settings.whatsappNumber) setWhatsappNumber(data.settings.whatsappNumber);
         if (data.settings.phoneNumber) setPhoneNumber(data.settings.phoneNumber);
         if (data.settings.agencyEmail) setAgencyEmail(data.settings.agencyEmail);
         if (data.settings.agencyAddress) setAgencyAddress(data.settings.agencyAddress);
+        try {
+          localStorage.setItem('travelo_settings', JSON.stringify(data.settings));
+        } catch (e) {}
       }
     });
   };
 
   const handleSaveSettings = (e: React.FormEvent) => {
     e.preventDefault();
+    const newSettings = {
+      whatsappNumber,
+      phoneNumber,
+      agencyEmail,
+      agencyAddress
+    };
+    try {
+      localStorage.setItem('travelo_settings', JSON.stringify(newSettings));
+    } catch (e) {}
+
     safeFetchJson(`${API_BASE_URL}/api/settings`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        whatsappNumber,
-        phoneNumber,
-        agencyEmail,
-        agencyAddress
-      })
+      body: JSON.stringify(newSettings)
     }).then((data) => {
       if (data && data.success) {
         showToast('✅ Agency WhatsApp & Phone Numbers updated successfully!');

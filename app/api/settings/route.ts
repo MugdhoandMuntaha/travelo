@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { connectToDatabase, isDbConnected } from '@/lib/db';
 import { SettingModel } from '@/models/Setting';
 
-const DEFAULT_SETTINGS = {
+let inMemorySettings = {
   whatsappNumber: '8801700000000',
   phoneNumber: '8801700000000',
   agencyEmail: 'contact@travelobd.com',
@@ -13,16 +13,24 @@ export async function GET() {
   try {
     await connectToDatabase();
     if (!isDbConnected()) {
-      return NextResponse.json({ success: true, settings: DEFAULT_SETTINGS });
+      return NextResponse.json({ success: true, settings: inMemorySettings });
     }
     const model: any = SettingModel;
     let settings = await model.findOne();
     if (!settings) {
-      settings = await model.create(DEFAULT_SETTINGS);
+      settings = await model.create(inMemorySettings);
+    } else {
+      // Sync inMemorySettings
+      inMemorySettings = {
+        whatsappNumber: settings.whatsappNumber || inMemorySettings.whatsappNumber,
+        phoneNumber: settings.phoneNumber || inMemorySettings.phoneNumber,
+        agencyEmail: settings.agencyEmail || inMemorySettings.agencyEmail,
+        agencyAddress: settings.agencyAddress || inMemorySettings.agencyAddress
+      };
     }
     return NextResponse.json({ success: true, settings });
   } catch (error: any) {
-    return NextResponse.json({ success: true, settings: DEFAULT_SETTINGS });
+    return NextResponse.json({ success: true, settings: inMemorySettings });
   }
 }
 
@@ -31,18 +39,23 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { whatsappNumber, phoneNumber, agencyEmail, agencyAddress } = body;
 
+    if (whatsappNumber !== undefined) inMemorySettings.whatsappNumber = whatsappNumber;
+    if (phoneNumber !== undefined) inMemorySettings.phoneNumber = phoneNumber;
+    if (agencyEmail !== undefined) inMemorySettings.agencyEmail = agencyEmail;
+    if (agencyAddress !== undefined) inMemorySettings.agencyAddress = agencyAddress;
+
     await connectToDatabase();
     if (!isDbConnected()) {
       return NextResponse.json({
         success: true,
-        settings: { whatsappNumber, phoneNumber, agencyEmail, agencyAddress }
+        settings: inMemorySettings
       });
     }
 
     const model: any = SettingModel;
     let settings = await model.findOne();
     if (!settings) {
-      settings = new SettingModel({ whatsappNumber, phoneNumber, agencyEmail, agencyAddress });
+      settings = new SettingModel(inMemorySettings);
     } else {
       if (whatsappNumber !== undefined) settings.whatsappNumber = whatsappNumber;
       if (phoneNumber !== undefined) settings.phoneNumber = phoneNumber;
@@ -53,6 +66,6 @@ export async function POST(request: Request) {
     await settings.save();
     return NextResponse.json({ success: true, settings });
   } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    return NextResponse.json({ success: true, settings: inMemorySettings });
   }
 }

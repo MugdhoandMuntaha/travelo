@@ -28,10 +28,22 @@ export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, bookingDa
       setRefCode(savedRef);
     }
 
+    try {
+      const cached = localStorage.getItem('travelo_settings');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed.whatsappNumber) setAgencyWhatsapp(parsed.whatsappNumber);
+        if (parsed.phoneNumber) setAgencyPhone(parsed.phoneNumber);
+      }
+    } catch (e) {}
+
     safeFetchJson(`${API_BASE_URL}/api/settings`).then((data) => {
       if (data && data.success && data.settings) {
         if (data.settings.whatsappNumber) setAgencyWhatsapp(data.settings.whatsappNumber);
         if (data.settings.phoneNumber) setAgencyPhone(data.settings.phoneNumber);
+        try {
+          localStorage.setItem('travelo_settings', JSON.stringify(data.settings));
+        } catch (e) {}
       }
     });
   }, [isOpen]);
@@ -40,8 +52,15 @@ export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, bookingDa
 
   const activeRef = refCode.trim() || sessionStorage.getItem('travelo_ref') || '';
 
-  const cleanWhatsapp = agencyWhatsapp.replace(/[^0-9]/g, '') || '8801700000000';
-  const cleanPhone = agencyPhone.replace(/[^0-9]/g, '') || '8801700000000';
+  let cleanWhatsapp = agencyWhatsapp.replace(/[^0-9]/g, '') || '8801700000000';
+  if (cleanWhatsapp.startsWith('01') && cleanWhatsapp.length === 11) {
+    cleanWhatsapp = '88' + cleanWhatsapp;
+  }
+
+  let cleanPhone = agencyPhone.replace(/[^0-9]/g, '') || '8801700000000';
+  if (cleanPhone.startsWith('01') && cleanPhone.length === 11) {
+    cleanPhone = '88' + cleanPhone;
+  }
 
   // Ideal Professional WhatsApp Booking Message Template
   const whatsappMessage = 
