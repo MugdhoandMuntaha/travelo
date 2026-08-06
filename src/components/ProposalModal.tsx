@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { X, Printer, CheckCircle, AlertTriangle, Cpu, Globe } from 'lucide-react';
 
@@ -93,7 +95,7 @@ export const ProposalModal: React.FC<ProposalModalProps> = ({ isOpen, onClose })
 
           <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '12px', padding: '1rem' }}>
             <h5 style={{ fontSize: '0.9rem', color: '#166534', fontWeight: 700, marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-              <CheckCircle size={16} /> Smart "Call-to-Book" Model
+              <CheckCircle size={16} /> Smart &quot;Call-to-Book&quot; Model
             </h5>
             <ul style={{ paddingLeft: '1.2rem', fontSize: '0.8rem', color: '#14532d' }}>
               <li style={{ marginBottom: '0.3rem' }}><strong>Zero API costs</strong> or subscription fees — 100% profit retention.</li>
@@ -106,17 +108,17 @@ export const ProposalModal: React.FC<ProposalModalProps> = ({ isOpen, onClose })
 
         {/* Technical Stack */}
         <h4 style={{ fontSize: '1rem', fontWeight: 800, color: '#0f172a', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-          <Globe size={16} color="#0f766e" /> Tech Stack & Hostinger Deployment
+          <Globe size={16} color="#0f766e" /> Full-Stack Next.js Architecture
         </h4>
         <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '1rem', marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
           <div>
-            <div style={{ fontWeight: 700, fontSize: '0.9rem', color: '#0f172a' }}>Modern React & Vite SPA / Plain PHP Hostinger Setup</div>
-            <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.2rem' }}>Deployable on Hostinger by choosing "Custom PHP/HTML Website" in hPanel.</div>
+            <div style={{ fontWeight: 700, fontSize: '0.9rem', color: '#0f172a' }}>Next.js App Router + Mongoose &amp; MongoDB Atlas</div>
+            <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.2rem' }}>Serverless API Route Handlers with explicit database management.</div>
           </div>
           <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
-            <span className="badge badge-primary">React 18</span>
-            <span className="badge badge-success">Vite</span>
-            <span className="badge badge-accent">Hostinger Ready</span>
+            <span className="badge badge-primary">Next.js 15</span>
+            <span className="badge badge-success">React 19</span>
+            <span className="badge badge-accent">MongoDB Atlas</span>
           </div>
         </div>
 

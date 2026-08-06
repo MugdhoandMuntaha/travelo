@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import { Phone, MessageSquare } from 'lucide-react';
 import { API_BASE_URL, safeFetchJson } from '../config';

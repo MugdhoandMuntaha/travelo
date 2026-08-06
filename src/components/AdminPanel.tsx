@@ -1,5 +1,7 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
-import { Image, Plus, Trash2, FileSpreadsheet, Plane, Users, DollarSign, Copy, Stamp, Compass, Phone, MessageSquare, Settings, CheckCircle } from 'lucide-react';
+import { Image as ImageIcon, Plus, Trash2, FileSpreadsheet, Plane, Users, DollarSign, Copy, Stamp, Compass, Phone, MessageSquare, Settings, CheckCircle } from 'lucide-react';
 import { API_BASE_URL, safeFetchJson } from '../config';
 
 interface BannerItem {
@@ -605,7 +607,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToSite }) => {
               fontSize: '0.9rem'
             }}
           >
-            <Image size={16} /> Hero Slides ({banners.length})
+            <ImageIcon size={16} /> Hero Slides ({banners.length})
           </button>
 
           <button
@@ -1490,7 +1492,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToSite }) => {
                   style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #334155', background: '#0f172a', color: 'white', fontSize: '0.95rem' }}
                 />
                 <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.25rem' }}>
-                  Used when customers tap "Call Agency Agent Now" or mobile floating call buttons.
+                  Used when customers tap &quot;Call Agency Agent Now&quot; or mobile floating call buttons.
                 </div>
               </div>
 

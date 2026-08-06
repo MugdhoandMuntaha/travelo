@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import { X, MessageSquare, PhoneCall, Tag, CheckCircle } from 'lucide-react';
 import { API_BASE_URL, safeFetchJson } from '../config';
@@ -9,8 +11,6 @@ interface LeadModalProps {
 }
 
 export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, bookingData }) => {
-  if (!isOpen || !bookingData) return null;
-
   const [userName, setUserName] = useState('');
   const [userPhone, setUserPhone] = useState('');
   const [notes, setNotes] = useState('');
@@ -22,6 +22,7 @@ export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, bookingDa
 
   // Retrieve stored referral code and live agency contact settings
   useEffect(() => {
+    if (!isOpen) return;
     const savedRef = sessionStorage.getItem('travelo_ref') || '';
     if (savedRef) {
       setRefCode(savedRef);
@@ -34,6 +35,8 @@ export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, bookingDa
       }
     });
   }, [isOpen]);
+
+  if (!isOpen || !bookingData) return null;
 
   const activeRef = refCode.trim() || sessionStorage.getItem('travelo_ref') || '';
 

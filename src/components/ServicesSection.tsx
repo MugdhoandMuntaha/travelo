@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import { Plane, Building2, FileText, Compass, Headphones, Stamp, MessageSquare } from 'lucide-react';
 import type { FlightDeal } from '../types';

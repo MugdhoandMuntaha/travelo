@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import { Plane, Calendar, MapPin, Send, PhoneCall, ShieldCheck, Award } from 'lucide-react';
 

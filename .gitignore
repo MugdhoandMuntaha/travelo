@@ -1,12 +1,13 @@
 # Dependency directories
 node_modules/
-node_modules
+/.pnp
+.pnp.js
 
-# Environment variables & secrets
-.env
-.env.*
-!.env.example
-*.env
+# Next.js build, output, & deployment
+.next/
+/out/
+.vercel
+.turbo
 
 # Production build outputs
 dist/
@@ -16,8 +17,27 @@ build/
 # Temp directory & legacy clones
 temp-site/
 temp-site
+*.tmp
+*.bak
 
-# Logs
+# Environment variables & secrets
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*
+!.env.example
+*.env
+
+# Cache & build tools
+.cache/
+.eslintcache
+.parcel-cache
+coverage/
+.nyc_output/
+
+# Logs & debugging
 logs/
 *.log
 npm-debug.log*
@@ -26,13 +46,25 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# IDE & System files
-.vscode/
-!.vscode/extensions.json
-.idea/
+# OS & System files
 .DS_Store
+.DS_Store?
+._*
+Thumbs.db
+ehthumbs.db
+.Spotlight-V100
+.Trashes
+
+# IDE & Editor files
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+*.swp
+*.swo
+
