@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Plane, Building2, FileText, Compass, Headphones, Stamp, MessageSquare } from 'lucide-react';
-import type { FlightDeal, VisaService, TourPackage } from '../types';
+import type { FlightDeal } from '../types';
 import { API_BASE_URL, safeFetchJson } from '../config';
 
 interface ServicesSectionProps {
@@ -17,34 +17,8 @@ const DEFAULT_FLIGHT_DEALS: FlightDeal[] = [
   { id: '6', from: 'Dhaka (DAC)', to: 'Sylhet (ZYL)', type: 'Domestic', airline: 'Air Astra / Novoair', priceEstimate: '৳3,800', image: 'https://images.unsplash.com/photo-1586375100100-33433e215d2a?auto=format&fit=crop&w=600&q=80' },
 ];
 
-const DEFAULT_VISA_SERVICES: VisaService[] = [
-  { country: 'Thailand', flag: '🇹🇭', processingTime: '3-5 Working Days', requirements: ['Passport', '2 Photo 35x45mm', '6 Month Bank Statement (Min 60k BDT)', 'NID Copy'], price: '৳5,500', popular: true },
-  { country: 'Malaysia (e-Visa)', flag: '🇲🇾', processingTime: '2-3 Working Days', requirements: ['Passport Scan', 'White Background Photo', 'Flight Reservation'], price: '৳4,800', popular: true },
-  { country: 'Saudi Arabia (Umrah/Tourist)', flag: '🇸🇦', processingTime: '24-48 Hours', requirements: ['Original Passport', 'Bio Photo', 'Vaccine Certificate'], price: '৳14,500', popular: true },
-  { country: 'UAE / Dubai (30 Days)', flag: '🇦🇪', processingTime: '2 Working Days', requirements: ['Passport Color Scan', 'Photo', 'Guarantor NID'], price: '৳11,000' },
-  { country: 'Singapore', flag: '🇸🇬', processingTime: '4-6 Working Days', requirements: ['Invitation Letter / Hotel Booking', 'Bank Statement', 'Company NOC'], price: '৳6,200' },
-  { country: 'United Kingdom (Consultancy)', flag: '🇬🇧', processingTime: '15-20 Days', requirements: ['Full Profile Evaluation', 'Asset Documentation', 'Sponsorship Letter'], price: '৳15,000' },
-];
-
-const DEFAULT_TOUR_PACKAGES: TourPackage[] = [
-  { id: '1', title: 'Sajek Valley Cloud Kingdom Escape', destination: 'Sajek Valley, Rangamati', duration: '3 Days 2 Nights', price: '৳7,500 / person', image: 'https://images.unsplash.com/photo-1628155930542-3c7a64e2c833?auto=format&fit=crop&w=600&q=80', highlights: ['Resort Stay', 'Helipad Sunrise View', 'Konglak Pahar Trek', 'Chander Gari Transport'] },
-  { id: '2', title: "Cox's Bazar Beach Luxury Getaway", destination: "Cox's Bazar", duration: '3 Days 2 Nights', price: '৳8,900 / person', image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80', highlights: ['4-Star Beachfront Hotel', 'Inani Beach Tour', 'Complimentary Breakfast', 'Private Airport Transfers'] },
-  { id: '3', title: 'Bangkok & Pattaya Tropical Fiesta', destination: 'Thailand', duration: '5 Days 4 Nights', price: '৳42,000 / person', image: 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?auto=format&fit=crop&w=600&q=80', highlights: ['Coral Island Speedboat Tour', 'Bangkok City Tour', 'Daily Breakfast', 'Visa Assistance Included'] },
-  { id: '4', title: 'Sundarbans Wild Mangrove Expedition', destination: 'Sundarbans, Khulna', duration: '3 Days 2 Nights', price: '৳12,500 / person', image: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=600&q=80', highlights: ['AC Cruise Vessel Stay', 'Forest Guard Security', 'Kotka Beach Visit', 'All Meal Buffet Included'] },
-];
-
-export const ServicesSection: React.FC<ServicesSectionProps> = ({ activeTab, onSelectBooking }) => {
-  const [activeCategory, setActiveCategory] = useState<'flights' | 'visa' | 'packages'>('visa');
+export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectBooking }) => {
   const [flightDeals, setFlightDeals] = useState<FlightDeal[]>(DEFAULT_FLIGHT_DEALS);
-  const [visaServices, setVisaServices] = useState<VisaService[]>(DEFAULT_VISA_SERVICES);
-  const [tourPackages, setTourPackages] = useState<TourPackage[]>(DEFAULT_TOUR_PACKAGES);
-
-  // Sync activeTab prop with internal activeCategory tab state
-  useEffect(() => {
-    if (activeTab === 'flights' || activeTab === 'visa' || activeTab === 'packages') {
-      setActiveCategory(activeTab);
-    }
-  }, [activeTab]);
 
   useEffect(() => {
     // Fetch Flights
@@ -59,28 +33,6 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ activeTab, onS
           priceEstimate: f.priceEstimate,
           image: f.image,
           tag: f.tag
-        })));
-      }
-    });
-
-    // Fetch Visas
-    safeFetchJson(`${API_BASE_URL}/api/visas`).then((data) => {
-      if (data && data.success && data.visas && data.visas.length > 0) {
-        setVisaServices(data.visas);
-      }
-    });
-
-    // Fetch Tour Packages
-    safeFetchJson(`${API_BASE_URL}/api/packages`).then((data) => {
-      if (data && data.success && data.packages && data.packages.length > 0) {
-        setTourPackages(data.packages.map((p: any) => ({
-          id: p._id || p.id,
-          title: p.title,
-          destination: p.destination,
-          duration: p.duration,
-          price: p.price,
-          image: p.image,
-          highlights: p.highlights || []
         })));
       }
     });
@@ -237,239 +189,64 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ activeTab, onS
           </h3>
 
           <p style={{ color: '#64748b', fontSize: '0.9rem', maxWidth: '520px', margin: '0 auto 1.5rem auto' }}>
-            Browse popular flight routes, visa support, and tour packages available today.
+            Browse popular flight routes available today.
           </p>
-
-          {/* Service Category Tabs */}
-          <div style={{ display: 'inline-flex', background: '#e2e8f0', padding: '0.35rem', borderRadius: '30px', gap: '0.35rem' }}>
-            <button
-              onClick={() => setActiveCategory('visa')}
-              style={{
-                background: activeCategory === 'visa' ? '#0284c7' : 'transparent',
-                color: activeCategory === 'visa' ? '#ffffff' : '#475569',
-                border: 'none',
-                padding: '0.55rem 1.25rem',
-                borderRadius: '24px',
-                fontWeight: 700,
-                fontSize: '0.85rem',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.4rem',
-                boxShadow: activeCategory === 'visa' ? '0 2px 8px rgba(2, 132, 199, 0.3)' : 'none',
-                transition: 'all 0.2s ease'
-              }}
-            >
-              <FileText size={15} /> Visa Help
-            </button>
-
-            <button
-              onClick={() => setActiveCategory('flights')}
-              style={{
-                background: activeCategory === 'flights' ? '#0284c7' : 'transparent',
-                color: activeCategory === 'flights' ? '#ffffff' : '#475569',
-                border: 'none',
-                padding: '0.55rem 1.25rem',
-                borderRadius: '24px',
-                fontWeight: 700,
-                fontSize: '0.85rem',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.4rem',
-                boxShadow: activeCategory === 'flights' ? '0 2px 8px rgba(2, 132, 199, 0.3)' : 'none',
-                transition: 'all 0.2s ease'
-              }}
-            >
-              <Plane size={15} /> Flight Tickets
-            </button>
-
-            <button
-              onClick={() => setActiveCategory('packages')}
-              style={{
-                background: activeCategory === 'packages' ? '#0284c7' : 'transparent',
-                color: activeCategory === 'packages' ? '#ffffff' : '#475569',
-                border: 'none',
-                padding: '0.55rem 1.25rem',
-                borderRadius: '24px',
-                fontWeight: 700,
-                fontSize: '0.85rem',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.4rem',
-                boxShadow: activeCategory === 'packages' ? '0 2px 8px rgba(2, 132, 199, 0.3)' : 'none',
-                transition: 'all 0.2s ease'
-              }}
-            >
-              <Compass size={15} /> Tour Packages
-            </button>
-          </div>
         </div>
 
-        {/* VISA CATEGORY */}
-        {activeCategory === 'visa' && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(310px, 1fr))', gap: '1.25rem' }}>
-            {visaServices.map((visa, idx) => (
-              <div 
-                key={(visa as any)._id || idx} 
-                className="animate-fade-in"
-                style={{
-                  background: '#ffffff',
-                  borderRadius: '16px',
-                  padding: '1.35rem',
-                  border: '1px solid #e2e8f0',
-                  boxShadow: '0 4px 15px rgba(0,0,0,0.04)'
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.8rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                    <span style={{ fontSize: '2rem' }}>{visa.flag}</span>
-                    <div>
-                      <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0f172a' }}>{visa.country} Visa</h3>
-                      <div style={{ fontSize: '0.725rem', color: '#64748b' }}>⏱️ {visa.processingTime}</div>
-                    </div>
+        {/* FLIGHT DEALS CATEGORY */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(310px, 1fr))', gap: '1.25rem' }}>
+          {flightDeals.map((flight) => (
+            <div 
+              key={flight.id} 
+              className="animate-fade-in"
+              style={{
+                background: '#ffffff',
+                borderRadius: '16px',
+                overflow: 'hidden',
+                border: '1px solid #e2e8f0',
+                boxShadow: '0 4px 15px rgba(0,0,0,0.04)'
+              }}
+            >
+              <div style={{ position: 'relative', height: '150px' }}>
+                <img src={flight.image} alt={flight.to} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                {flight.tag && (
+                  <div style={{ position: 'absolute', top: '10px', left: '10px' }}>
+                    <span className="badge badge-accent">{flight.tag}</span>
                   </div>
-                  {visa.popular && <span className="badge badge-success">High Approval</span>}
+                )}
+                <div style={{ position: 'absolute', bottom: '10px', right: '10px', background: 'rgba(15, 23, 42, 0.8)', color: 'white', padding: '0.2rem 0.6rem', borderRadius: '12px', fontSize: '0.725rem', fontWeight: 600 }}>
+                  {flight.type}
+                </div>
+              </div>
+
+              <div style={{ padding: '1.25rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                  <div style={{ fontSize: '1rem', fontWeight: 800, color: '#0f172a' }}>{flight.from}</div>
+                  <div style={{ color: '#0284c7', fontWeight: 700 }}>✈️</div>
+                  <div style={{ fontSize: '1rem', fontWeight: 800, color: '#0f172a' }}>{flight.to}</div>
                 </div>
 
-                <div style={{ margin: '1rem 0' }}>
-                  <div style={{ fontSize: '0.775rem', fontWeight: 700, color: '#475569', marginBottom: '0.4rem' }}>Required Documents:</div>
-                  <ul style={{ paddingLeft: '1.1rem', fontSize: '0.8rem', color: '#475569' }}>
-                    {visa.requirements.map((req, rIdx) => (
-                      <li key={rIdx} style={{ marginBottom: '0.2rem' }}>{req}</li>
-                    ))}
-                  </ul>
+                <div style={{ fontSize: '0.775rem', color: '#64748b', marginBottom: '1rem' }}>
+                  Airline: <span style={{ fontWeight: 600, color: '#334155' }}>{flight.airline}</span>
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '1.2rem', paddingTop: '0.75rem', borderTop: '1px solid #f1f5f9' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '0.75rem', borderTop: '1px solid #f1f5f9' }}>
                   <div>
-                    <div style={{ fontSize: '0.725rem', color: '#64748b' }}>Processing Fee</div>
-                    <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0284c7' }}>{visa.price}</div>
+                    <div style={{ fontSize: '0.725rem', color: '#64748b' }}>Fares From</div>
+                    <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#059669' }}>{flight.priceEstimate}</div>
                   </div>
                   <button 
-                    onClick={() => onSelectBooking({ title: `${visa.country} Visa Assistance`, price: visa.price, category: 'Visa Processing' })}
-                    className="btn btn-primary" 
+                    onClick={() => onSelectBooking({ title: `Flight: ${flight.from} to ${flight.to}`, price: flight.priceEstimate, category: 'Flight Ticket' })}
+                    className="btn btn-whatsapp" 
                     style={{ fontSize: '0.825rem', padding: '0.5rem 0.9rem', borderRadius: '20px' }}
                   >
-                    Apply Now
+                    <MessageSquare size={14} /> Book Flight
                   </button>
                 </div>
               </div>
-            ))}
-          </div>
-        )}
-
-        {/* FLIGHT DEALS CATEGORY */}
-        {activeCategory === 'flights' && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(310px, 1fr))', gap: '1.25rem' }}>
-            {flightDeals.map((flight) => (
-              <div 
-                key={flight.id} 
-                className="animate-fade-in"
-                style={{
-                  background: '#ffffff',
-                  borderRadius: '16px',
-                  overflow: 'hidden',
-                  border: '1px solid #e2e8f0',
-                  boxShadow: '0 4px 15px rgba(0,0,0,0.04)'
-                }}
-              >
-                <div style={{ position: 'relative', height: '150px' }}>
-                  <img src={flight.image} alt={flight.to} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  {flight.tag && (
-                    <div style={{ position: 'absolute', top: '10px', left: '10px' }}>
-                      <span className="badge badge-accent">{flight.tag}</span>
-                    </div>
-                  )}
-                  <div style={{ position: 'absolute', bottom: '10px', right: '10px', background: 'rgba(15, 23, 42, 0.8)', color: 'white', padding: '0.2rem 0.6rem', borderRadius: '12px', fontSize: '0.725rem', fontWeight: 600 }}>
-                    {flight.type}
-                  </div>
-                </div>
-
-                <div style={{ padding: '1.25rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                    <div style={{ fontSize: '1rem', fontWeight: 800, color: '#0f172a' }}>{flight.from}</div>
-                    <div style={{ color: '#0284c7', fontWeight: 700 }}>✈️</div>
-                    <div style={{ fontSize: '1rem', fontWeight: 800, color: '#0f172a' }}>{flight.to}</div>
-                  </div>
-
-                  <div style={{ fontSize: '0.775rem', color: '#64748b', marginBottom: '1rem' }}>
-                    Airline: <span style={{ fontWeight: 600, color: '#334155' }}>{flight.airline}</span>
-                  </div>
-
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '0.75rem', borderTop: '1px solid #f1f5f9' }}>
-                    <div>
-                      <div style={{ fontSize: '0.725rem', color: '#64748b' }}>Fares From</div>
-                      <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#059669' }}>{flight.priceEstimate}</div>
-                    </div>
-                    <button 
-                      onClick={() => onSelectBooking({ title: `Flight: ${flight.from} to ${flight.to}`, price: flight.priceEstimate, category: 'Flight Ticket' })}
-                      className="btn btn-whatsapp" 
-                      style={{ fontSize: '0.825rem', padding: '0.5rem 0.9rem', borderRadius: '20px' }}
-                    >
-                      <MessageSquare size={14} /> Book Flight
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* TOUR PACKAGES CATEGORY */}
-        {activeCategory === 'packages' && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '1.25rem' }}>
-            {tourPackages.map((pkg) => (
-              <div 
-                key={pkg.id} 
-                className="animate-fade-in"
-                style={{
-                  background: '#ffffff',
-                  borderRadius: '16px',
-                  overflow: 'hidden',
-                  border: '1px solid #e2e8f0',
-                  boxShadow: '0 4px 15px rgba(0,0,0,0.04)'
-                }}
-              >
-                <div style={{ position: 'relative', height: '170px' }}>
-                  <img src={pkg.image} alt={pkg.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  <div style={{ position: 'absolute', bottom: '10px', left: '10px', background: 'rgba(15, 23, 42, 0.8)', color: 'white', padding: '0.25rem 0.75rem', borderRadius: '20px', fontSize: '0.775rem', fontWeight: 600 }}>
-                    📍 {pkg.destination} • {pkg.duration}
-                  </div>
-                </div>
-
-                <div style={{ padding: '1.25rem' }}>
-                  <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#0f172a', marginBottom: '0.6rem' }}>
-                    {pkg.title}
-                  </h3>
-
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '1rem' }}>
-                    {pkg.highlights.map((hl, idx) => (
-                      <span key={idx} style={{ background: '#f1f5f9', color: '#334155', padding: '0.2rem 0.5rem', borderRadius: '4px', fontSize: '0.725rem', fontWeight: 600 }}>
-                        ✓ {hl}
-                      </span>
-                    ))}
-                  </div>
-
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '0.75rem', borderTop: '1px solid #f1f5f9' }}>
-                    <div>
-                      <div style={{ fontSize: '0.725rem', color: '#64748b' }}>Package Price</div>
-                      <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#d97706' }}>{pkg.price}</div>
-                    </div>
-                    <button 
-                      onClick={() => onSelectBooking({ title: pkg.title, price: pkg.price, category: 'Tour Package' })}
-                      className="btn btn-whatsapp" 
-                      style={{ fontSize: '0.825rem', padding: '0.5rem 0.9rem', borderRadius: '20px' }}
-                    >
-                      <MessageSquare size={14} /> Book Package
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+            </div>
+          ))}
+        </div>
 
       </div>
     </section>

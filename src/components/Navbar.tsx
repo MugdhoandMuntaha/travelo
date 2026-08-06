@@ -11,10 +11,8 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
   const navLinks = [
-    { id: 'services', label: 'Services & Deals' },
-    { id: 'flights', label: 'Flights' },
-    { id: 'visa', label: 'Visa Help' },
-    { id: 'packages', label: 'Tour Packages' },
+    { id: 'services', label: 'Services' },
+    { id: 'flights', label: 'Flight Deals' },
   ];
 
   const handleNavClick = (id: string) => {
