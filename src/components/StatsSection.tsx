@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import { useTheme } from '../context/ThemeContext';
 
 export const StatsSection: React.FC = () => {
   const [happyTravelers, setHappyTravelers] = useState<number>(0);
@@ -8,6 +9,7 @@ export const StatsSection: React.FC = () => {
   const [supportHours, setSupportHours] = useState<number>(0);
   const [hasAnimated, setHasAnimated] = useState<boolean>(false);
   const sectionRef = useRef<HTMLDivElement>(null);
+  const { t } = useTheme();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -67,12 +69,13 @@ export const StatsSection: React.FC = () => {
     <section
       ref={sectionRef}
       style={{
-        background: '#ffffff',
+        background: t.cardBg,
         padding: '3.5rem 0',
-        borderTop: '1px solid #e2e8f0',
-        borderBottom: '1px solid #e2e8f0',
-        color: '#0f172a',
-        boxShadow: '0 4px 20px rgba(0,0,0,0.02)'
+        borderTop: `1px solid ${t.cardBorder}`,
+        borderBottom: `1px solid ${t.cardBorder}`,
+        color: t.titleText,
+        boxShadow: t.shadow,
+        transition: 'all 0.2s ease'
       }}
     >
       <div className="container">
@@ -91,7 +94,7 @@ export const StatsSection: React.FC = () => {
               style={{
                 fontSize: 'clamp(2.5rem, 5vw, 4.2rem)',
                 fontWeight: 900,
-                color: '#2563eb',
+                color: t.accent,
                 fontFamily: 'var(--font-head)',
                 lineHeight: 1.1,
                 letterSpacing: '-1px'
@@ -102,7 +105,7 @@ export const StatsSection: React.FC = () => {
             <div
               style={{
                 fontSize: 'clamp(0.85rem, 2vw, 1.05rem)',
-                color: '#475569',
+                color: t.subText,
                 fontWeight: 600,
                 marginTop: '0.5rem',
                 letterSpacing: '0.2px'
@@ -118,7 +121,7 @@ export const StatsSection: React.FC = () => {
               style={{
                 fontSize: 'clamp(2.5rem, 5vw, 4.2rem)',
                 fontWeight: 900,
-                color: '#2563eb',
+                color: t.accent,
                 fontFamily: 'var(--font-head)',
                 lineHeight: 1.1,
                 letterSpacing: '-1px'
@@ -129,7 +132,7 @@ export const StatsSection: React.FC = () => {
             <div
               style={{
                 fontSize: 'clamp(0.85rem, 2vw, 1.05rem)',
-                color: '#475569',
+                color: t.subText,
                 fontWeight: 600,
                 marginTop: '0.5rem',
                 letterSpacing: '0.2px'
@@ -145,7 +148,7 @@ export const StatsSection: React.FC = () => {
               style={{
                 fontSize: 'clamp(2.5rem, 5vw, 4.2rem)',
                 fontWeight: 900,
-                color: '#2563eb',
+                color: t.accent,
                 fontFamily: 'var(--font-head)',
                 lineHeight: 1.1,
                 letterSpacing: '-1px'
@@ -156,7 +159,7 @@ export const StatsSection: React.FC = () => {
             <div
               style={{
                 fontSize: 'clamp(0.85rem, 2vw, 1.05rem)',
-                color: '#475569',
+                color: t.subText,
                 fontWeight: 600,
                 marginTop: '0.5rem',
                 letterSpacing: '0.2px'

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Phone, MessageSquare, Send } from 'lucide-react';
 import { API_BASE_URL, safeFetchJson } from '../config';
+import { useTheme } from '../context/ThemeContext';
 
 interface CtaSectionProps {
   onOpenProposal?: () => void;
@@ -19,6 +20,7 @@ function formatWaNumber(num: string): string {
 export const CtaSection: React.FC<CtaSectionProps> = ({ onOpenProposal }) => {
   const [whatsapp, setWhatsapp] = useState('8801700000000');
   const [phone, setPhone] = useState('8801700000000');
+  const { t } = useTheme();
 
   useEffect(() => {
     try {
@@ -45,9 +47,10 @@ export const CtaSection: React.FC<CtaSectionProps> = ({ onOpenProposal }) => {
     <section 
       className="no-print" 
       style={{ 
-        background: '#ffffff', 
+        background: t.bg, 
         padding: '3rem 1rem 4rem 1rem', 
-        position: 'relative'
+        position: 'relative',
+        transition: 'all 0.2s ease'
       }}
     >
       <div className="container" style={{ maxWidth: '980px', margin: '0 auto' }}>

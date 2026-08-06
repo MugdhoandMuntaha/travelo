@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, MessageSquare, PhoneCall, Sparkles } from 'lucide-react';
 import { API_BASE_URL, safeFetchJson } from '../config';
+import { useTheme } from '../context/ThemeContext';
 
 export interface BannerSlide {
   _id?: string;
@@ -49,6 +50,7 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ onSelectBooking }) =
   const [slides, setSlides] = useState<BannerSlide[]>(DEFAULT_SLIDES);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const { t } = useTheme();
 
   useEffect(() => {
     safeFetchJson(`${API_BASE_URL}/api/banners`).then((data) => {
@@ -228,7 +230,7 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ onSelectBooking }) =
                 width: idx === currentIndex ? '26px' : '8px',
                 height: '8px',
                 borderRadius: '4px',
-                background: idx === currentIndex ? '#0284c7' : 'rgba(255,255,255,0.4)',
+                background: idx === currentIndex ? t.accent : 'rgba(255,255,255,0.4)',
                 border: 'none',
                 cursor: 'pointer',
                 transition: 'all 0.3s ease'

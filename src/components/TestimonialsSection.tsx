@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Star } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
 
 interface TestimonialItem {
   id: number;
@@ -36,15 +37,18 @@ const TESTIMONIALS: TestimonialItem[] = [
 ];
 
 export const TestimonialsSection: React.FC = () => {
+  const { t } = useTheme();
+
   return (
     <section 
       className="no-print"
       style={{ 
-        background: '#f8fafc', 
-        color: '#0f172a', 
+        background: t.bg, 
+        color: t.titleText, 
         padding: '4.5rem 1rem',
         position: 'relative',
-        borderTop: '1px solid #f1f5f9'
+        borderTop: `1px solid ${t.tableRowBorder}`,
+        transition: 'all 0.2s ease'
       }}
     >
       <div className="container" style={{ maxWidth: '920px', margin: '0 auto' }}>
@@ -53,7 +57,7 @@ export const TestimonialsSection: React.FC = () => {
         <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
           <div 
             style={{ 
-              color: '#0284c7', 
+              color: t.accent, 
               fontSize: '0.8rem', 
               fontWeight: 800, 
               letterSpacing: '2px', 
@@ -68,7 +72,7 @@ export const TestimonialsSection: React.FC = () => {
             style={{ 
               fontSize: 'clamp(1.8rem, 3.5vw, 2.5rem)', 
               fontWeight: 800, 
-              color: '#0f172a',
+              color: t.titleText,
               letterSpacing: '-0.5px'
             }}
           >
@@ -82,22 +86,20 @@ export const TestimonialsSection: React.FC = () => {
             <div 
               key={item.id}
               style={{
-                background: '#ffffff',
-                border: '1px solid #e2e8f0',
+                background: t.cardBg,
+                border: `1px solid ${t.cardBorder}`,
                 borderRadius: '16px',
                 padding: '1.5rem 1.75rem',
                 transition: 'transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease',
-                boxShadow: '0 4px 20px -2px rgba(0, 0, 0, 0.04)'
+                boxShadow: t.shadow
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.borderColor = '#0284c7';
-                e.currentTarget.style.boxShadow = '0 10px 25px -5px rgba(2, 132, 199, 0.12)';
+                e.currentTarget.style.borderColor = t.accent;
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.borderColor = '#e2e8f0';
-                e.currentTarget.style.boxShadow = '0 4px 20px -2px rgba(0, 0, 0, 0.04)';
+                e.currentTarget.style.borderColor = t.cardBorder;
               }}
             >
               {/* Star Rating Icons */}
@@ -111,7 +113,7 @@ export const TestimonialsSection: React.FC = () => {
               <p 
                 style={{ 
                   fontSize: '1rem', 
-                  color: '#334155', 
+                  color: t.label, 
                   lineHeight: 1.6, 
                   fontWeight: 500,
                   marginBottom: '0.85rem' 
@@ -121,8 +123,8 @@ export const TestimonialsSection: React.FC = () => {
               </p>
 
               {/* Author & Location */}
-              <div style={{ fontSize: '0.875rem', color: '#0284c7', fontWeight: 700 }}>
-                — {item.author}, <span style={{ color: '#64748b', fontWeight: 500 }}>{item.location}</span>
+              <div style={{ fontSize: '0.875rem', color: t.accent, fontWeight: 700 }}>
+                — {item.author}, <span style={{ color: t.subText, fontWeight: 500 }}>{item.location}</span>
               </div>
             </div>
           ))}

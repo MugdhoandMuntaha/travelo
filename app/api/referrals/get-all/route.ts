@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { connectToDatabase, isDbConnected } from '@/lib/db';
 import { ReferrerModel, ReferralClickModel, ReferralConversionModel } from '@/models/Referral';
 
+export const dynamic = 'force-dynamic';
+
 const DEFAULT_REFERRERS = [
   { _id: 'ref-1', refCode: 'REF1001', name: 'Tanvir Ahmed (Dhaka Agent)', phone: '01711000000', commissionRate: 5.0, clicks: 42, totalSales: 48000, totalCommission: 2400 },
   { _id: 'ref-2', refCode: 'REF1002', name: 'Rahim Travel Club', phone: '01811000000', commissionRate: 5.0, clicks: 19, totalSales: 14500, totalCommission: 725 }

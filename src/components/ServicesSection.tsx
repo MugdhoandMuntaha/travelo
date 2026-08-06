@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Plane, Building2, FileText, Compass, Headphones, Stamp, MessageSquare } from 'lucide-react';
 import type { FlightDeal } from '../types';
 import { API_BASE_URL, safeFetchJson } from '../config';
+import { useTheme } from '../context/ThemeContext';
 
 interface ServicesSectionProps {
   activeTab?: string;
@@ -21,6 +22,7 @@ const DEFAULT_FLIGHT_DEALS: FlightDeal[] = [
 
 export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectBooking }) => {
   const [flightDeals, setFlightDeals] = useState<FlightDeal[]>(DEFAULT_FLIGHT_DEALS);
+  const { isDark, t } = useTheme();
 
   useEffect(() => {
     // Fetch Flights
@@ -42,37 +44,37 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectBookin
 
   const coreServices = [
     {
-      icon: <Plane size={24} color="#0284c7" />,
+      icon: <Plane size={24} color={t.accent} />,
       title: 'Air Ticketing',
       desc: 'Instant booking for domestic & international flights with exclusive agent discounts.',
       category: 'Flight Ticket'
     },
     {
-      icon: <FileText size={24} color="#0284c7" />,
+      icon: <FileText size={24} color={t.accent} />,
       title: 'Visa Assistance',
       desc: 'Expert document processing, e-Visa applications, and high-approval consultancy.',
       category: 'Visa Support'
     },
     {
-      icon: <Compass size={24} color="#0284c7" />,
+      icon: <Compass size={24} color={t.accent} />,
       title: 'Tour Packages',
       desc: 'Customized holiday packages for Sajek, Cox’s Bazar, Thailand, Malaysia & more.',
       category: 'Tour Package'
     },
     {
-      icon: <Building2 size={24} color="#0284c7" />,
+      icon: <Building2 size={24} color={t.accent} />,
       title: 'Hotel Reservations',
       desc: 'Handpicked luxury resorts and budget hotels worldwide at competitive prices.',
       category: 'Hotel Booking'
     },
     {
-      icon: <Stamp size={24} color="#0284c7" />,
+      icon: <Stamp size={24} color={t.accent} />,
       title: 'Umrah & Hajj Packages',
       desc: 'Dedicated spiritual journeys with premium hotel options close to Haramain.',
       category: 'Umrah Package'
     },
     {
-      icon: <Headphones size={24} color="#0284c7" />,
+      icon: <Headphones size={24} color={t.accent} />,
       title: '24/7 Travel Support',
       desc: "We're here for you before, during and after your trip — anytime.",
       category: 'Travel Support'
@@ -80,7 +82,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectBookin
   ];
 
   return (
-    <section id="services" className="no-print" style={{ padding: '4.5rem 0', background: '#f8fafc', color: '#0f172a' }}>
+    <section id="services" className="no-print" style={{ padding: '4.5rem 0', background: t.bg, color: t.titleText, transition: 'all 0.2s ease' }}>
       <div className="container">
         
         {/* Core Services Header */}
@@ -89,7 +91,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectBookin
             fontSize: '11.5px',
             letterSpacing: '1.5px',
             textTransform: 'uppercase',
-            color: '#0284c7',
+            color: t.accent,
             fontWeight: 700,
             marginBottom: '8px'
           }}>
@@ -100,18 +102,18 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectBookin
             fontFamily: 'var(--font-head)',
             fontWeight: 800,
             fontSize: 'clamp(1.8rem, 4vw, 2.5rem)',
-            color: '#0f172a',
+            color: t.titleText,
             marginBottom: '8px'
           }}>
             Our Services
           </h2>
 
-          <p style={{ color: '#64748b', fontSize: '0.95rem', maxWidth: '440px', margin: '0 auto' }}>
+          <p style={{ color: t.subText, fontSize: '0.95rem', maxWidth: '440px', margin: '0 auto' }}>
             Everything you need for a perfect journey.
           </p>
         </div>
 
-        {/* 6 Core Services Grid matching original project clean white background */}
+        {/* 6 Core Services Grid */}
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
@@ -123,17 +125,17 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectBookin
               key={idx}
               onClick={() => onSelectBooking({ title: service.title, price: 'Custom Quote', category: service.category })}
               style={{
-                background: '#ffffff',
-                border: '1px solid #e2e8f0',
+                background: t.cardBg,
+                border: `1px solid ${t.cardBorder}`,
                 borderRadius: '16px',
                 padding: '1.5rem',
                 cursor: 'pointer',
-                boxShadow: '0 4px 16px rgba(0,0,0,0.04)',
+                boxShadow: t.shadow,
                 transition: 'all 0.25s ease',
               }}
             >
               <div style={{
-                background: '#f0f9ff',
+                background: isDark ? 'rgba(91, 147, 255, 0.12)' : '#f0f9ff',
                 width: '48px',
                 height: '48px',
                 borderRadius: '12px',
@@ -149,7 +151,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectBookin
                 fontFamily: 'var(--font-head)',
                 fontWeight: 700,
                 fontSize: '1.1rem',
-                color: '#0f172a',
+                color: t.titleText,
                 marginBottom: '0.5rem'
               }}>
                 {service.title}
@@ -158,7 +160,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectBookin
               <p style={{
                 fontFamily: 'var(--font-body)',
                 fontSize: '0.85rem',
-                color: '#64748b',
+                color: t.subText,
                 lineHeight: 1.6
               }}>
                 {service.desc}
@@ -173,7 +175,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectBookin
             fontSize: '11.5px',
             letterSpacing: '1.5px',
             textTransform: 'uppercase',
-            color: '#0284c7',
+            color: t.accent,
             fontWeight: 700,
             marginBottom: '8px'
           }}>
@@ -184,13 +186,13 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectBookin
             fontFamily: 'var(--font-head)',
             fontWeight: 800,
             fontSize: 'clamp(1.5rem, 3.5vw, 2.1rem)',
-            color: '#0f172a',
+            color: t.titleText,
             marginBottom: '0.5rem'
           }}>
             Featured Travel Deals
           </h3>
 
-          <p style={{ color: '#64748b', fontSize: '0.9rem', maxWidth: '520px', margin: '0 auto 1.5rem auto' }}>
+          <p style={{ color: t.subText, fontSize: '0.9rem', maxWidth: '520px', margin: '0 auto 1.5rem auto' }}>
             Browse popular flight routes available today.
           </p>
         </div>
@@ -202,11 +204,11 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectBookin
               key={flight.id} 
               className="animate-fade-in"
               style={{
-                background: '#ffffff',
+                background: t.cardBg,
                 borderRadius: '16px',
                 overflow: 'hidden',
-                border: '1px solid #e2e8f0',
-                boxShadow: '0 4px 15px rgba(0,0,0,0.04)'
+                border: `1px solid ${t.cardBorder}`,
+                boxShadow: t.shadow
               }}
             >
               <div style={{ position: 'relative', height: '150px' }}>
@@ -223,19 +225,19 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectBookin
 
               <div style={{ padding: '1.25rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                  <div style={{ fontSize: '1rem', fontWeight: 800, color: '#0f172a' }}>{flight.from}</div>
-                  <div style={{ color: '#0284c7', fontWeight: 700 }}>✈️</div>
-                  <div style={{ fontSize: '1rem', fontWeight: 800, color: '#0f172a' }}>{flight.to}</div>
+                  <div style={{ fontSize: '1rem', fontWeight: 800, color: t.titleText }}>{flight.from}</div>
+                  <div style={{ color: t.accent, fontWeight: 700 }}>✈️</div>
+                  <div style={{ fontSize: '1rem', fontWeight: 800, color: t.titleText }}>{flight.to}</div>
                 </div>
 
-                <div style={{ fontSize: '0.775rem', color: '#64748b', marginBottom: '1rem' }}>
-                  Airline: <span style={{ fontWeight: 600, color: '#334155' }}>{flight.airline}</span>
+                <div style={{ fontSize: '0.775rem', color: t.subText, marginBottom: '1rem' }}>
+                  Airline: <span style={{ fontWeight: 600, color: t.inputText }}>{flight.airline}</span>
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '0.75rem', borderTop: '1px solid #f1f5f9' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '0.75rem', borderTop: `1px solid ${t.tableRowBorder}` }}>
                   <div>
-                    <div style={{ fontSize: '0.725rem', color: '#64748b' }}>Fares From</div>
-                    <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#059669' }}>{flight.priceEstimate}</div>
+                    <div style={{ fontSize: '0.725rem', color: t.subText }}>Fares From</div>
+                    <div style={{ fontSize: '1.15rem', fontWeight: 800, color: t.priceColor }}>{flight.priceEstimate}</div>
                   </div>
                   <button 
                     onClick={() => onSelectBooking({ title: `Flight: ${flight.from} to ${flight.to}`, price: flight.priceEstimate, category: 'Flight Ticket' })}

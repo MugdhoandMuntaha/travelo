@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
-import '../src/index.css';
+import '@/src/index.css';
+import { ThemeProvider } from '@/src/context/ThemeContext';
 
 export const metadata: Metadata = {
   title: 'Travelo - #1 Call-to-Book Travel & Ticketing Agency in Bangladesh',
@@ -22,7 +23,9 @@ export default function RootLayout({
         />
       </head>
       <body>
-        {children}
+        <ThemeProvider>
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

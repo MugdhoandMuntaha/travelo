@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { connectToDatabase, isDbConnected } from '@/lib/db';
 import { ReferrerModel } from '@/models/Referral';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();

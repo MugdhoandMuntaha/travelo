@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, MessageSquare, PhoneCall, Tag, CheckCircle } from 'lucide-react';
 import { API_BASE_URL, safeFetchJson } from '../config';
+import { useTheme } from '../context/ThemeContext';
 
 interface LeadModalProps {
   isOpen: boolean;
@@ -19,6 +20,7 @@ export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, bookingDa
   const [agencyWhatsapp, setAgencyWhatsapp] = useState('8801700000000');
   const [agencyPhone, setAgencyPhone] = useState('8801700000000');
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const { t, isDark } = useTheme();
 
   // Retrieve stored referral code and live agency contact settings
   useEffect(() => {
@@ -135,17 +137,17 @@ Please confirm availability and reply with the final confirmed ticket fare. Than
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay" style={{ background: t.modalOverlayBg }} onClick={onClose}>
       <div 
         className="modal-content" 
         onClick={(e) => e.stopPropagation()}
         style={{ 
-          background: '#ffffff',
-          color: '#0f172a',
-          border: '1px solid #e2e8f0',
+          background: t.modalBg,
+          color: t.titleText,
+          border: `1px solid ${t.modalBorder}`,
           padding: '2rem',
           borderRadius: '20px',
-          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.15)',
+          boxShadow: t.shadow,
           maxWidth: '500px',
           width: '90%'
         }}
@@ -153,13 +155,13 @@ Please confirm availability and reply with the final confirmed ticket fare. Than
         {/* If Submitted, Show Visual Confirmation Screen */}
         {isSubmitted ? (
           <div style={{ textAlign: 'center', padding: '1rem 0' }}>
-            <div style={{ display: 'inline-flex', background: '#dcfce7', borderRadius: '50%', padding: '1rem', marginBottom: '1rem' }}>
-              <CheckCircle size={56} color="#16a34a" />
+            <div style={{ display: 'inline-flex', background: t.badgeGreenBg, borderRadius: '50%', padding: '1rem', marginBottom: '1rem' }}>
+              <CheckCircle size={56} color={t.badgeGreenText} />
             </div>
-            <h3 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#0f172a', marginBottom: '0.5rem' }}>
+            <h3 style={{ fontSize: '1.4rem', fontWeight: 800, color: t.titleText, marginBottom: '0.5rem' }}>
               Inquiry Saved & Sent!
             </h3>
-            <p style={{ fontSize: '0.9rem', color: '#475569', marginBottom: '1.5rem', lineHeight: 1.5 }}>
+            <p style={{ fontSize: '0.9rem', color: t.subText, marginBottom: '1.5rem', lineHeight: 1.5 }}>
               Your booking inquiry for <strong>{bookingData.title}</strong> has been logged to the Travelo system. 
             </p>
 
@@ -191,11 +193,11 @@ Please confirm availability and reply with the final confirmed ticket fare. Than
                   onClose();
                 }}
                 style={{
-                  background: '#f1f5f9',
-                  border: 'none',
+                  background: t.cardItemBg,
+                  border: `1px solid ${t.cardItemBorder}`,
                   padding: '0.75rem',
                   borderRadius: '12px',
-                  color: '#475569',
+                  color: t.subText,
                   fontWeight: 600,
                   cursor: 'pointer'
                 }}
@@ -210,15 +212,15 @@ Please confirm availability and reply with the final confirmed ticket fare. Than
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.25rem' }}>
               <div>
                 <span className="badge badge-primary" style={{ marginBottom: '0.4rem' }}>{bookingData.category}</span>
-                <h3 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#0f172a', marginTop: '0.25rem' }}>
+                <h3 style={{ fontSize: '1.35rem', fontWeight: 800, color: t.titleText, marginTop: '0.25rem' }}>
                   Direct Agent Contact
                 </h3>
               </div>
               <button 
                 onClick={onClose}
                 style={{ 
-                  background: '#f1f5f9', 
-                  color: '#64748b',
+                  background: isDark ? 'rgba(255, 255, 255, 0.1)' : '#f1f5f9', 
+                  color: t.subText,
                   border: 'none', 
                   borderRadius: '50%', 
                   width: '34px', 
@@ -234,21 +236,21 @@ Please confirm availability and reply with the final confirmed ticket fare. Than
               </button>
             </div>
 
-            {/* Selected Service Light Card Box */}
+            {/* Selected Service Light/Dark Card Box */}
             <div style={{ 
-              background: '#f0f9ff', 
-              border: '1px solid #bae6fd', 
+              background: isDark ? 'rgba(91, 147, 255, 0.12)' : '#f0f9ff', 
+              border: `1px solid ${isDark ? 'rgba(91, 147, 255, 0.3)' : '#bae6fd'}`, 
               borderRadius: '12px', 
               padding: '1.1rem', 
               marginBottom: '1.25rem' 
             }}>
-              <div style={{ fontSize: '0.775rem', color: '#0369a1', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              <div style={{ fontSize: '0.775rem', color: t.accent, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                 Selected Service
               </div>
-              <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0369a1', margin: '0.2rem 0' }}>
+              <div style={{ fontSize: '1.15rem', fontWeight: 800, color: t.accent, margin: '0.2rem 0' }}>
                 {bookingData.title}
               </div>
-              <div style={{ fontSize: '0.9rem', color: '#0284c7', fontWeight: 700 }}>
+              <div style={{ fontSize: '0.9rem', color: t.accent, fontWeight: 700 }}>
                 Est. Fare: {bookingData.price}
               </div>
             </div>
@@ -256,7 +258,7 @@ Please confirm availability and reply with the final confirmed ticket fare. Than
             {/* Form Fields */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', marginBottom: '1.5rem' }}>
               <div>
-                <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#475569', marginBottom: '0.3rem', display: 'block' }}>
+                <label style={{ fontSize: '0.8rem', fontWeight: 700, color: t.label, marginBottom: '0.3rem', display: 'block' }}>
                   Your Name (Optional)
                 </label>
                 <input 
@@ -264,12 +266,12 @@ Please confirm availability and reply with the final confirmed ticket fare. Than
                   value={userName}
                   onChange={(e) => setUserName(e.target.value)}
                   placeholder="e.g. Rahim Chowdhury"
-                  style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '0.9rem' }}
+                  style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', background: t.inputBg, border: `1px solid ${t.inputBorder}`, color: t.inputText, fontSize: '0.9rem' }}
                 />
               </div>
 
               <div>
-                <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#475569', marginBottom: '0.3rem', display: 'block' }}>
+                <label style={{ fontSize: '0.8rem', fontWeight: 700, color: t.label, marginBottom: '0.3rem', display: 'block' }}>
                   Your Phone Number (Optional)
                 </label>
                 <input 
@@ -277,12 +279,12 @@ Please confirm availability and reply with the final confirmed ticket fare. Than
                   value={userPhone}
                   onChange={(e) => setUserPhone(e.target.value)}
                   placeholder="e.g. 01712345678"
-                  style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '0.9rem' }}
+                  style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', background: t.inputBg, border: `1px solid ${t.inputBorder}`, color: t.inputText, fontSize: '0.9rem' }}
                 />
               </div>
 
               <div>
-                <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#475569', marginBottom: '0.3rem', display: 'block' }}>
+                <label style={{ fontSize: '0.8rem', fontWeight: 700, color: t.label, marginBottom: '0.3rem', display: 'block' }}>
                   Travel Dates / Custom Requests
                 </label>
                 <textarea 
@@ -290,13 +292,13 @@ Please confirm availability and reply with the final confirmed ticket fare. Than
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="e.g. Departure 15th Aug, 2 Adults 1 Child"
-                  style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '0.9rem', resize: 'vertical' }}
+                  style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', background: t.inputBg, border: `1px solid ${t.inputBorder}`, color: t.inputText, fontSize: '0.9rem', resize: 'vertical' }}
                 />
               </div>
 
               <div>
-                <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#475569', marginBottom: '0.3rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                  <Tag size={14} color="#0284c7" /> Partner Referral Code
+                <label style={{ fontSize: '0.8rem', fontWeight: 700, color: t.label, marginBottom: '0.3rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                  <Tag size={14} color={t.accent} /> Partner Referral Code
                 </label>
                 <input 
                   type="text" 
@@ -307,14 +309,15 @@ Please confirm availability and reply with the final confirmed ticket fare. Than
                     width: '100%', 
                     padding: '0.75rem', 
                     borderRadius: '10px', 
-                    border: activeRef ? '1.5px solid #22c55e' : '1px solid #cbd5e1', 
+                    border: activeRef ? `1.5px solid ${t.badgeGreenText}` : `1px solid ${t.inputBorder}`, 
                     fontSize: '0.9rem',
-                    background: activeRef ? '#f0fdf4' : '#ffffff',
+                    background: activeRef ? t.badgeGreenBg : t.inputBg,
+                    color: t.inputText,
                     fontWeight: activeRef ? 700 : 400
                   }}
                 />
                 {activeRef && (
-                  <div style={{ fontSize: '0.75rem', color: '#15803d', fontWeight: 700, marginTop: '0.2rem' }}>
+                  <div style={{ fontSize: '0.75rem', color: t.badgeGreenText, fontWeight: 700, marginTop: '0.2rem' }}>
                     ✓ Active Referral Code Applied ({activeRef})
                   </div>
                 )}
@@ -351,9 +354,9 @@ Please confirm availability and reply with the final confirmed ticket fare. Than
                   alignItems: 'center', 
                   justifyContent: 'center', 
                   gap: '0.5rem',
-                  background: '#f8fafc', 
-                  color: '#0f172a',
-                  border: '1px solid #cbd5e1',
+                  background: t.cardItemBg, 
+                  color: t.titleText,
+                  border: `1px solid ${t.cardItemBorder}`,
                   padding: '0.75rem',
                   borderRadius: '12px',
                   fontSize: '0.9rem',
