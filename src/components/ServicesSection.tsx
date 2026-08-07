@@ -120,20 +120,22 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectBookin
           gap: '1.25rem',
           marginBottom: '5rem'
         }}>
-          {coreServices.map((service, idx) => (
-            <div
-              key={idx}
-              onClick={() => onSelectBooking({ title: service.title, price: 'Custom Quote', category: service.category })}
-              style={{
-                background: t.cardBg,
-                border: `1px solid ${t.cardBorder}`,
-                borderRadius: '16px',
-                padding: '1.5rem',
-                cursor: 'pointer',
-                boxShadow: t.shadow,
-                transition: 'all 0.25s ease',
-              }}
-            >
+          {coreServices.map((service, idx) => {
+            const isAirTicketing = service.title === 'Air Ticketing';
+            return (
+              <div
+                key={idx}
+                onClick={isAirTicketing ? () => onSelectBooking({ title: service.title, price: 'Custom Quote', category: service.category }) : undefined}
+                style={{
+                  background: t.cardBg,
+                  border: `1px solid ${t.cardBorder}`,
+                  borderRadius: '16px',
+                  padding: '1.5rem',
+                  cursor: isAirTicketing ? 'pointer' : 'default',
+                  boxShadow: t.shadow,
+                  transition: 'all 0.25s ease',
+                }}
+              >
               <div style={{
                 background: isDark ? 'rgba(91, 147, 255, 0.12)' : '#f0f9ff',
                 width: '48px',
@@ -166,7 +168,8 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectBookin
                 {service.desc}
               </p>
             </div>
-          ))}
+          );
+        })}
         </div>
 
         {/* Interactive Deals & Booking Explorer */}
