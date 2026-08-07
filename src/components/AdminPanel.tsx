@@ -183,11 +183,11 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
 
   const accentColor = isDark ? '#5B93FF' : '#0284c7';
   const labelColor = isDark ? '#e2e8f0' : '#334155';
-  const inputBg = isDark ? '#060F22' : '#ffffff';
-  const inputBorder = isDark ? 'rgba(255, 255, 255, 0.15)' : '#cbd5e1';
+  const inputBg = isDark ? '#11254B' : '#ffffff';
+  const inputBorder = isDark ? 'rgba(255, 255, 255, 0.2)' : '#cbd5e1';
   const textColor = isDark ? '#ffffff' : '#0f172a';
   const subtextColor = isDark ? '#93A5C4' : '#64748b';
-  const containerBg = isDark ? '#060F22' : '#f8fafc';
+  const containerBg = isDark ? '#11254B' : '#f8fafc';
 
   return (
     <div>
@@ -325,8 +325,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToSite, onLogout }
     titleText: isDark ? '#ffffff' : '#0f172a',
     subText: isDark ? '#93A5C4' : '#64748b',
     label: isDark ? '#e2e8f0' : '#334155',
-    inputBg: isDark ? '#060F22' : '#ffffff',
-    inputBorder: isDark ? 'rgba(255, 255, 255, 0.15)' : '#cbd5e1',
+    inputBg: isDark ? '#11254B' : '#ffffff',
+    inputBorder: isDark ? 'rgba(255, 255, 255, 0.2)' : '#cbd5e1',
     inputText: isDark ? '#ffffff' : '#0f172a',
     cardBg: isDark ? '#0B1B3A' : '#ffffff',
     cardBorder: isDark ? 'rgba(255, 255, 255, 0.1)' : '#e2e8f0',
@@ -816,7 +816,25 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToSite, onLogout }
   };
 
   return (
-    <div style={{ background: t.bg, minHeight: '100vh', color: t.titleText, paddingBottom: '3rem', fontFamily: "'Inter', system-ui, -apple-system, sans-serif", transition: 'background 0.2s ease, color 0.2s ease' }}>
+    <div className="admin-panel-root" style={{ background: t.bg, minHeight: '100vh', color: t.titleText, paddingBottom: '3rem', fontFamily: "'Inter', system-ui, -apple-system, sans-serif", transition: 'background 0.2s ease, color 0.2s ease' }}>
+      <style>{`
+        .admin-panel-root input::placeholder,
+        .admin-panel-root textarea::placeholder {
+          color: ${isDark ? '#93A5C4' : '#64748b'} !important;
+          opacity: 0.85 !important;
+        }
+        .admin-panel-root input:focus,
+        .admin-panel-root textarea:focus,
+        .admin-panel-root select:focus {
+          outline: none !important;
+          border-color: ${t.accent} !important;
+          box-shadow: 0 0 0 3px ${isDark ? 'rgba(91, 147, 255, 0.25)' : 'rgba(2, 132, 199, 0.2)'} !important;
+        }
+        .admin-panel-root select option {
+          background-color: ${isDark ? '#0B1B3A' : '#ffffff'} !important;
+          color: ${isDark ? '#ffffff' : '#0f172a'} !important;
+        }
+      `}</style>
       
       {/* Floating Action Confirmation Toast */}
       {toastMsg && (
@@ -1132,7 +1150,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToSite, onLogout }
 
         {/* VISA CARDS TAB */}
         {activeTab === 'visas' && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '2rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
             
             {/* Add Visa Form */}
             <div style={{ background: t.cardBg, padding: '1.75rem', borderRadius: '16px', border: `1px solid ${t.cardBorder}`, boxShadow: t.shadow }}>
@@ -1304,7 +1322,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToSite, onLogout }
 
         {/* TOUR PACKAGES TAB */}
         {activeTab === 'packages' && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '2rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
             
             {/* Add Package Form */}
             <div style={{ background: t.cardBg, padding: '1.75rem', borderRadius: '16px', border: `1px solid ${t.cardBorder}`, boxShadow: t.shadow }}>
@@ -1472,7 +1490,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToSite, onLogout }
 
         {/* FLIGHT CARDS TAB */}
         {activeTab === 'flights' && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '2rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
             
             {/* Add Flight Form */}
             <div style={{ background: t.cardBg, padding: '1.75rem', borderRadius: '16px', border: `1px solid ${t.cardBorder}`, boxShadow: t.shadow }}>
@@ -1664,7 +1682,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToSite, onLogout }
 
         {/* BANNERS TAB */}
         {activeTab === 'banners' && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '2rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
             
             {/* Add Slide Form */}
             <div style={{ background: t.cardBg, padding: '1.75rem', borderRadius: '16px', border: `1px solid ${t.cardBorder}`, boxShadow: t.shadow }}>
@@ -2064,10 +2082,10 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToSite, onLogout }
 
         {/* TESTIMONIALS MANAGEMENT TAB */}
         {activeTab === 'testimonials' && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
             
             {/* Form Column: Add New Testimonial */}
-            <div style={{ background: t.cardBg, padding: '1.75rem', borderRadius: '16px', border: `1px solid ${t.cardBorder}`, boxShadow: t.shadow, height: 'fit-content' }}>
+            <div style={{ background: t.cardBg, padding: '1.75rem', borderRadius: '16px', border: `1px solid ${t.cardBorder}`, boxShadow: t.shadow }}>
               <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '0.4rem', color: t.titleText, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <Plus size={18} color={t.accent} /> Add New Traveler Testimonial
               </h3>
