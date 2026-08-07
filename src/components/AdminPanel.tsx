@@ -22,9 +22,21 @@ import {
   ShieldCheck,
   ExternalLink,
   Sun,
-  Moon
+  Moon,
+  Star,
+  LogOut
 } from 'lucide-react';
 import { API_BASE_URL, safeFetchJson } from '../config';
+
+interface TestimonialItem {
+  _id?: string;
+  stars: number;
+  quote: string;
+  author: string;
+  location: string;
+  order?: number;
+  active?: boolean;
+}
 
 interface BannerItem {
   _id?: string;
@@ -105,6 +117,7 @@ interface ConversionItem {
 
 interface AdminPanelProps {
   onBackToSite: () => void;
+  onLogout?: () => void;
 }
 
 /* ==========================================================================
@@ -268,8 +281,22 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
   );
 };
 
-export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToSite }) => {
-  const [activeTab, setActiveTab] = useState<'visas' | 'flights' | 'packages' | 'banners' | 'referrals' | 'leads' | 'settings'>('visas');
+export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToSite, onLogout }) => {
+  const [activeTab, setActiveTab] = useState<'visas' | 'flights' | 'packages' | 'banners' | 'testimonials' | 'referrals' | 'leads' | 'settings'>('visas');
+
+  // Testimonials state & form
+  const [testimonials, setTestimonials] = useState<TestimonialItem[]>([]);
+  const [testimonialQuote, setTestimonialQuote] = useState('');
+  const [testimonialAuthor, setTestimonialAuthor] = useState('');
+  const [testimonialLocation, setTestimonialLocation] = useState('');
+  const [testimonialStars, setTestimonialStars] = useState(5);
+
+  // Fetch Testimonials
+  const fetchTestimonials = () => {
+    safeFetchJson(`${API_BASE_URL}/api/testimonials`).then((data) => {
+      if (data && data.testimonials) setTestimonials(data.testimonials);
+    });
+  };
   
   // Theme State (Dark Theme Default)
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
@@ -493,9 +520,53 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToSite }) => {
     fetchPackages();
     fetchBanners();
     fetchFlights();
+    fetchTestimonials();
     fetchLeads();
     fetchReferrals();
   }, []);
+
+  // Handle Add Testimonial
+  const handleAddTestimonial = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!testimonialQuote.trim() || !testimonialAuthor.trim()) {
+      alert('Please enter both quote and author name.');
+      return;
+    }
+
+    const newTestimonial = {
+      stars: Number(testimonialStars),
+      quote: testimonialQuote,
+      author: testimonialAuthor,
+      location: testimonialLocation || 'Bangladesh',
+      order: testimonials.length + 1
+    };
+
+    fetch(`${API_BASE_URL}/api/testimonials`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newTestimonial)
+    })
+      .then((res) => res.json())
+      .then(() => {
+        setTestimonialQuote('');
+        setTestimonialAuthor('');
+        setTestimonialLocation('');
+        setTestimonialStars(5);
+        fetchTestimonials();
+        showToast('New traveler testimonial added to website!');
+      });
+  };
+
+  // Handle Delete Testimonial
+  const handleDeleteTestimonial = (id: string) => {
+    if (!confirm('Are you sure you want to delete this testimonial?')) return;
+    fetch(`${API_BASE_URL}/api/testimonials/${id}`, { method: 'DELETE' })
+      .then((res) => res.json())
+      .then(() => {
+        fetchTestimonials();
+        showToast('Testimonial deleted.');
+      });
+  };
 
   // Handle Visa Add
   const handleAddVisa = (e: React.FormEvent) => {
@@ -845,6 +916,30 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToSite }) => {
             >
               <ExternalLink size={15} /> Back to Website
             </button>
+
+            {onLogout && (
+              <button 
+                onClick={onLogout}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.45rem',
+                  padding: '0.65rem 1.1rem',
+                  borderRadius: '10px',
+                  fontWeight: 700,
+                  fontSize: '0.85rem',
+                  color: '#ef4444',
+                  border: '1px solid rgba(239, 68, 68, 0.35)',
+                  background: 'rgba(239, 68, 68, 0.12)',
+                  cursor: 'pointer',
+                  boxShadow: '0 2px 8px rgba(239, 68, 68, 0.15)',
+                  transition: 'all 0.15s ease'
+                }}
+                title="Log out of Admin Portal"
+              >
+                <LogOut size={15} /> Log Out
+              </button>
+            )}
           </div>
 
         </div>
@@ -948,6 +1043,27 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToSite }) => {
             }}
           >
             <ImageIcon size={16} /> Hero Slides ({banners.length})
+          </button>
+
+          <button
+            onClick={() => setActiveTab('testimonials')}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              padding: '0.65rem 1.1rem',
+              borderRadius: '10px',
+              fontWeight: 700,
+              fontSize: '0.85rem',
+              border: activeTab === 'testimonials' ? `1px solid ${t.accent}` : '1px solid transparent',
+              background: activeTab === 'testimonials' ? t.accentGradient : t.tabInactiveBg,
+              color: activeTab === 'testimonials' ? '#ffffff' : t.tabInactiveText,
+              cursor: 'pointer',
+              boxShadow: activeTab === 'testimonials' ? t.accentShadow : 'none',
+              transition: 'all 0.15s ease'
+            }}
+          >
+            <Star size={16} /> Testimonials ({testimonials.length})
           </button>
 
           <button
@@ -1939,6 +2055,174 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToSite }) => {
                       ))}
                     </tbody>
                   </table>
+                </div>
+              )}
+            </div>
+
+          </div>
+        )}
+
+        {/* TESTIMONIALS MANAGEMENT TAB */}
+        {activeTab === 'testimonials' && (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem' }}>
+            
+            {/* Form Column: Add New Testimonial */}
+            <div style={{ background: t.cardBg, padding: '1.75rem', borderRadius: '16px', border: `1px solid ${t.cardBorder}`, boxShadow: t.shadow, height: 'fit-content' }}>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '0.4rem', color: t.titleText, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Plus size={18} color={t.accent} /> Add New Traveler Testimonial
+              </h3>
+              <p style={{ fontSize: '0.85rem', color: t.subText, marginBottom: '1.25rem' }}>
+                Add real customer reviews and testimonials to showcase on the homepage.
+              </p>
+
+              <form onSubmit={handleAddTestimonial} style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
+                <div>
+                  <label style={{ fontSize: '0.85rem', fontWeight: 600, color: t.label, display: 'block', marginBottom: '0.4rem' }}>
+                    Traveler Name *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={testimonialAuthor}
+                    onChange={(e) => setTestimonialAuthor(e.target.value)}
+                    placeholder="e.g. Tanvir Hossain"
+                    style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: '10px', border: `1px solid ${t.inputBorder}`, background: t.inputBg, color: t.inputText, fontSize: '0.9rem' }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ fontSize: '0.85rem', fontWeight: 600, color: t.label, display: 'block', marginBottom: '0.4rem' }}>
+                    Traveler Location *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={testimonialLocation}
+                    onChange={(e) => setTestimonialLocation(e.target.value)}
+                    placeholder="e.g. Dhaka, Bangladesh"
+                    style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: '10px', border: `1px solid ${t.inputBorder}`, background: t.inputBg, color: t.inputText, fontSize: '0.9rem' }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ fontSize: '0.85rem', fontWeight: 600, color: t.label, display: 'block', marginBottom: '0.4rem' }}>
+                    Star Rating (1 to 5) *
+                  </label>
+                  <select
+                    value={testimonialStars}
+                    onChange={(e) => setTestimonialStars(Number(e.target.value))}
+                    style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: '10px', border: `1px solid ${t.inputBorder}`, background: t.inputBg, color: t.inputText, fontSize: '0.9rem' }}
+                  >
+                    <option value={5}>5 Stars (★★★★★ - Excellent)</option>
+                    <option value={4}>4 Stars (★★★★☆ - Very Good)</option>
+                    <option value={3}>3 Stars (★★★☆☆ - Good)</option>
+                    <option value={2}>2 Stars (★★☆☆☆ - Average)</option>
+                    <option value={1}>1 Star (★☆☆☆☆ - Poor)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label style={{ fontSize: '0.85rem', fontWeight: 600, color: t.label, display: 'block', marginBottom: '0.4rem' }}>
+                    Customer Review / Quote *
+                  </label>
+                  <textarea
+                    rows={4}
+                    required
+                    value={testimonialQuote}
+                    onChange={(e) => setTestimonialQuote(e.target.value)}
+                    placeholder="e.g. Booked our Cox's Bazar trip through Travelo — everything was sorted smoothly!"
+                    style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: '10px', border: `1px solid ${t.inputBorder}`, background: t.inputBg, color: t.inputText, fontSize: '0.9rem', resize: 'vertical' }}
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.5rem',
+                    padding: '0.85rem 1.25rem',
+                    borderRadius: '12px',
+                    fontWeight: 700,
+                    fontSize: '0.95rem',
+                    color: '#ffffff',
+                    background: t.accentGradient,
+                    border: 'none',
+                    cursor: 'pointer',
+                    boxShadow: t.accentShadow,
+                    marginTop: '0.5rem'
+                  }}
+                >
+                  <Plus size={18} /> Publish Testimonial
+                </button>
+              </form>
+            </div>
+
+            {/* List Column: Manage & Delete Testimonials */}
+            <div style={{ background: t.cardBg, padding: '1.75rem', borderRadius: '16px', border: `1px solid ${t.cardBorder}`, boxShadow: t.shadow }}>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '0.4rem', color: t.titleText, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Star size={18} color="#f59e0b" /> Active Website Testimonials ({testimonials.length})
+              </h3>
+              <p style={{ fontSize: '0.85rem', color: t.subText, marginBottom: '1.25rem' }}>
+                All traveler testimonials currently displayed on the main website homepage.
+              </p>
+
+              {testimonials.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '3rem 1rem', color: t.subText }}>
+                  No testimonials found. Add your first customer review using the form!
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  {testimonials.map((item, idx) => (
+                    <div
+                      key={item._id || idx}
+                      style={{
+                        background: t.cardItemBg,
+                        border: `1px solid ${t.cardItemBorder}`,
+                        borderRadius: '12px',
+                        padding: '1.25rem',
+                        position: 'relative'
+                      }}
+                    >
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
+                        <div style={{ display: 'flex', gap: '0.2rem' }}>
+                          {[1, 2, 3, 4, 5].slice(0, item.stars || 5).map((starNum) => (
+                            <Star key={starNum} size={15} fill="#f59e0b" color="#f59e0b" />
+                          ))}
+                        </div>
+
+                        {item._id && (
+                          <button
+                            onClick={() => handleDeleteTestimonial(item._id!)}
+                            style={{
+                              background: 'rgba(239, 68, 68, 0.12)',
+                              color: '#ef4444',
+                              border: '1px solid rgba(239, 68, 68, 0.3)',
+                              padding: '0.35rem 0.65rem',
+                              borderRadius: '8px',
+                              cursor: 'pointer',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '0.3rem',
+                              fontSize: '0.775rem',
+                              fontWeight: 700
+                            }}
+                          >
+                            <Trash2 size={13} /> Delete
+                          </button>
+                        )}
+                      </div>
+
+                      <p style={{ fontSize: '0.9rem', color: t.label, lineHeight: 1.5, marginBottom: '0.65rem', fontStyle: 'italic' }}>
+                        &quot;{item.quote}&quot;
+                      </p>
+
+                      <div style={{ fontSize: '0.825rem', fontWeight: 700, color: t.accent }}>
+                        — {item.author}, <span style={{ color: t.subText, fontWeight: 500 }}>{item.location}</span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>

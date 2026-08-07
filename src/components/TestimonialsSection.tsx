@@ -1,18 +1,20 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Star } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
+import { API_BASE_URL, safeFetchJson } from '../config';
 
-interface TestimonialItem {
-  id: number;
+export interface TestimonialItem {
+  _id?: string;
+  id?: number;
   stars: number;
   quote: string;
   author: string;
   location: string;
 }
 
-const TESTIMONIALS: TestimonialItem[] = [
+const DEFAULT_TESTIMONIALS: TestimonialItem[] = [
   {
     id: 1,
     stars: 5,
@@ -38,6 +40,15 @@ const TESTIMONIALS: TestimonialItem[] = [
 
 export const TestimonialsSection: React.FC = () => {
   const { t } = useTheme();
+  const [testimonials, setTestimonials] = useState<TestimonialItem[]>(DEFAULT_TESTIMONIALS);
+
+  useEffect(() => {
+    safeFetchJson(`${API_BASE_URL}/api/testimonials`).then((data) => {
+      if (data && data.success && data.testimonials && data.testimonials.length > 0) {
+        setTestimonials(data.testimonials);
+      }
+    });
+  }, []);
 
   return (
     <section 
@@ -82,9 +93,9 @@ export const TestimonialsSection: React.FC = () => {
 
         {/* Testimonial Cards List */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-          {TESTIMONIALS.map((item) => (
+          {testimonials.map((item, idx) => (
             <div 
-              key={item.id}
+              key={item._id || item.id || idx}
               style={{
                 background: t.cardBg,
                 border: `1px solid ${t.cardBorder}`,
@@ -104,7 +115,7 @@ export const TestimonialsSection: React.FC = () => {
             >
               {/* Star Rating Icons */}
               <div style={{ display: 'flex', gap: '0.25rem', marginBottom: '0.85rem' }}>
-                {[1, 2, 3, 4, 5].slice(0, item.stars).map((starNum) => (
+                {[1, 2, 3, 4, 5].slice(0, item.stars || 5).map((starNum) => (
                   <Star key={starNum} size={16} fill="#f59e0b" color="#f59e0b" />
                 ))}
               </div>
